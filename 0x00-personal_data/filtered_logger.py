@@ -112,3 +112,25 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     )
     return connection
   
+def main() -> None:
+    """
+    Main function that fetches all rows from the users table and logs each row with sensitive
+    fields redacted.
+    """
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("SELECT * FROM users;")
+    columns = [desc[0] for desc in cursor.description]
+    logger = get_logger()
+
+    for row in cursor:
+        message = "; ".join(f"{col}={val}" for col, val in zip(columns, row))
+        logger.info(message)
+
+    cursor.close()
+    db.close()
+
+if __name__ == "__main__":
+    main()
+    
