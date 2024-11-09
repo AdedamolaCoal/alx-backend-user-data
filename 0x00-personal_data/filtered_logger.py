@@ -5,6 +5,8 @@ This module contains functions for obfuscating sensitive data in log messages.
 
 import re
 import logging
+import os
+import mysql.connector
 from typing import List
 
 
@@ -89,4 +91,24 @@ def get_logger() -> logging.Logger:
     logger.addHandler(handler)
 
     return logger
+  
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """
+    Connects to a MySQL database using credentials from environment variables.
+    
+    Returns:
+        mysql.connector.connection.MySQLConnection: Database connection object.
+    """
+    username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    database = os.getenv("PERSONAL_DATA_DB_NAME")
+
+    connection = mysql.connector.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=database
+    )
+    return connection
   
