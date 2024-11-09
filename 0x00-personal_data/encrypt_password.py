@@ -3,6 +3,7 @@
 
 import bcrypt
 
+
 def hash_password(password: str) -> bytes:
   """hash_password function
   
@@ -14,7 +15,8 @@ def hash_password(password: str) -> bytes:
   """
   return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-def is_valid(hashed_password: bytes, password: str) -> bytes:
+
+def is_valid(hashed_password: bytes, password: str) -> bool:
   """is valid function
   
   Args:
@@ -24,5 +26,4 @@ def is_valid(hashed_password: bytes, password: str) -> bytes:
   Returns: 
       bytes: hashed password
   """
-  is_valid = bcrypt.checkpw(password.encode('utf-8'), hashed_password)
-  return is_valid
+  return bcrypt.checkpw(password.encode('utf-8'), hashed_password) 
