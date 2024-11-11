@@ -25,3 +25,13 @@ def unauthorized():
         401 Unauthorized error to trigger error handler.
     """
     abort(401)
+
+@app_views.route('/forbidden', methods=['GET'])
+def forbidden():
+  """
+  Route to test the custom 403 Forbidden error handler.
+  Raises:
+      403 Forbidden error to trigger error handler.
+  """
+  abort(403)
+  

@@ -20,3 +20,13 @@ def unauthorized_error(error):
         JSON response with an error message and a 401 status code.
     """
     return jsonify({"error": "Unauthorized"}), 401
+
+@app.errorhandler(403)
+def forbidden_error(error):
+  """
+  Custom handler for 403 Forbidden errors.
+
+  Returns:
+      JSON response with an error message and a 403 status code.
+  """
+  return jsonify({"error": "Forbidden"}), 403
