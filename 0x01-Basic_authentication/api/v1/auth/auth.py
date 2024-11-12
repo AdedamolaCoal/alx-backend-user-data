@@ -14,11 +14,11 @@ class Auth:
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """
-        Determines if authentication is required based on the path and excluded paths.
+        Determines if authentication is required based on the path.
 
         Args:
             path (str): The path to check.
-            excluded_paths (List[str]): Paths that are excluded from authentication.
+            excluded_paths (List[str]): Paths that are excluded from auth.
 
         Returns:
             bool: True if path requires authentication, False otherwise.
@@ -43,11 +43,9 @@ class Auth:
             request (Flask request): The request object.
 
         Returns:
-            str: None for now. Will be implemented later.
+            str: Authorization header or None if not present.
         """
-        if request is None:
-            return None
-        if request.headers.get('Authorization') is None:
+        if request is None or 'Authorization' not in request.headers:
             return None
         return request.headers.get('Authorization')
 
