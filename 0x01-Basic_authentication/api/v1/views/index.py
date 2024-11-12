@@ -6,7 +6,9 @@ including status check and unauthorized error test.
 
 from flask import Blueprint, abort, jsonify
 
+
 app_views = Blueprint('app_views', __name__, url_prefix='/api/v1')
+
 
 @app_views.route('/status', methods=['GET'])
 def status():
