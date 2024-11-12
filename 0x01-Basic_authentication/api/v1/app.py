@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""an unauthorized request to the
-route /api/v1/status should
-return a 401 status code
-"""
+"""an unauthorized request to the forbidden route """
 
 from flask import Flask, jsonify, request, abort
 from api.v1.views import app_views
@@ -14,7 +11,6 @@ import os
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app)
-
 
 auth = None
 
@@ -39,13 +35,13 @@ def unauthorized_error(error):
 
 @app.errorhandler(403)
 def forbidden_error(error):
-  """
-  Custom handler for 403 Forbidden errors.
+    """
+    Custom handler for 403 Forbidden errors.
 
-  Returns:
-      JSON response with an error message and a 403 status code.
-  """
-  return jsonify({"error": "Forbidden"}), 403
+    Returns:
+        JSON response with an error message and a 403 status code.
+    """
+    return jsonify({"error": "Forbidden"}), 403
 
 
 @app.before_request
@@ -55,8 +51,9 @@ def before_request_handler():
         return
 
     # Define the paths that do not require authentication
-    excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
-    
+    excluded_paths = ['/api/v1/status/',
+                      '/api/v1/unauthorized/', '/api/v1/forbidden/']
+
     # Check if the path requires authentication
     if not auth.require_auth(request.path, excluded_paths):
         return
