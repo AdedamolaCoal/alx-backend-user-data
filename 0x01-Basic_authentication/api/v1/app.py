@@ -26,6 +26,7 @@ elif AUTH_TYPE == "auth":
     from api.v1.auth.auth import Auth
     auth = Auth()
 
+
 @app.errorhandler(401)
 def unauthorized_error(error):
     """
@@ -34,6 +35,7 @@ def unauthorized_error(error):
         JSON response with an error message and a 401 status code.
     """
     return jsonify({"error": "Unauthorized"}), 401
+
 
 @app.errorhandler(403)
 def forbidden_error(error):
