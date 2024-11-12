@@ -127,3 +127,38 @@ class BasicAuth(Auth):
 
         user = self.user_object_from_credentials(user_email, user_pwd)
         return user
+
+    def require_auth(self, path: str, excluded_paths: list) -> bool:
+        """
+        Determines if a path requires authentication based on excluded paths.
+
+        Args:
+            path (str): The path to check.
+            excluded_paths (list): A list of paths that are excluded from authentication.
+
+        Returns:
+        bool: True if the path requires authentication, False otherwise.
+        """
+        if path is None or not excluded_paths:
+            return True
+
+        # Normalize the path by ensuring it does not end with a trailing slash
+        if path[-1] != '/':
+            path += '/'
+
+        for excluded_path in excluded_paths:
+            # Normalize excluded path as well
+            if excluded_path[-1] != '/':
+                excluded_path += '/'
+
+            # Check if excluded path ends with '*' (wildcard)
+            if excluded_path.endswith('*'):
+                # Check if path starts with the excluded path prefix (excluding the '*')
+                if path.startswith(excluded_path[:-1]):
+                    return False
+            else:
+                # Check for exact match
+                if path == excluded_path:
+                    return False
+
+        return True
