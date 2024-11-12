@@ -4,7 +4,7 @@ BasicAuth module for managing basic authentication.
 """
 
 import base64
-from SimpleAPI.models.user import User
+from models.user import User
 from typing import Tuple, TypeVar, Optional
 from api.v1.auth.auth import Auth
 
