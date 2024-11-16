@@ -10,7 +10,7 @@ from flask import Blueprint, abort, jsonify
 app_views = Blueprint('app_views', __name__, url_prefix='/api/v1')
 
 
-@app_views.route('/status', methods=['GET'])
+@app_views.route('/api/v1/status', methods=['GET'])
 def status():
     """
     Status route to check if the API is running.
@@ -19,7 +19,8 @@ def status():
     """
     return jsonify({"status": "OK"})
 
-@app_views.route('/unauthorized', methods=['GET'])
+
+@app_views.route('/api/v1/unauthorized', methods=['GET'])
 def unauthorized():
     """
     Route to test the custom 401 Unauthorized error handler.
@@ -28,12 +29,12 @@ def unauthorized():
     """
     abort(401)
 
-@app_views.route('/forbidden', methods=['GET'])
+
+@app_views.route('/api/v1/forbidden', methods=['GET'])
 def forbidden():
-  """
-  Route to test the custom 403 Forbidden error handler.
-  Raises:
-      403 Forbidden error to trigger error handler.
-  """
-  abort(403)
-  
+    """
+    Route to test the custom 403 Forbidden error handler.
+    Raises:
+        403 Forbidden error to trigger error handler.
+    """
+    abort(403)
