@@ -11,7 +11,7 @@ from requests import Response
 app_views = Blueprint('app_views', __name__, url_prefix='/api/v1')
 
 
-@app_views.route('/api/v1/status', methods=['GET'])
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
 def status():
     """
     Status route to check if the API is running.
@@ -21,7 +21,7 @@ def status():
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/api/v1/unauthorized', methods=['GET'])
+@app_views.route('/unauthorized', methods=['GET'], strict_slashes=False)
 def unauthorized():
     """
     Route to test the custom 401 Unauthorized error handler.
@@ -31,7 +31,7 @@ def unauthorized():
     abort(401, Response('You are not authorized to view this page.'))
 
 
-@app_views.route('/api/v1/forbidden', methods=['GET'])
+@app_views.route('/forbidden', methods=['GET'], strict_slashes=False)
 def forbidden():
     """
     Route to test the custom 403 Forbidden error handler.

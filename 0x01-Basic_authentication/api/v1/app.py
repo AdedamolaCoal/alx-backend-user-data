@@ -59,26 +59,9 @@ def before_request_handler():
     if auth.current_user(request) is None:
         abort(403)
 
-# Example endpoint
 
-
-@app.route('/api/v1/status/', methods=['GET'])
-def status():
-    """Status route to check API status."""
-    return jsonify({"status": "OK"})
-
-# Unauthorized route for testing
-
-
-@app.route('/api/v1/unauthorized/', methods=['GET'])
-def unauthorized():
-    """Route that raises 401 Unauthorized error."""
-    abort(401)
-
-# Forbidden route for testing
-
-
-@app.route('/api/v1/forbidden/', methods=['GET'])
-def forbidden():
-    """Route that raises 403 Forbidden error."""
-    abort(403)
+if __name__ == "__main__":
+    import os
+    host = os.getenv("API_HOST", "0.0.0.0")
+    port = int(os.getenv("API_PORT", 5000))
+    app.run(host=host, port=port)
