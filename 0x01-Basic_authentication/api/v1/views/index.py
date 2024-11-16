@@ -5,6 +5,7 @@ including status check and unauthorized error test.
 """
 
 from flask import Blueprint, abort, jsonify
+from requests import Response
 
 
 app_views = Blueprint('app_views', __name__, url_prefix='/api/v1')
@@ -27,7 +28,7 @@ def unauthorized():
     Raises:
         401 Unauthorized error to trigger error handler.
     """
-    abort(401)
+    abort(401, Response('You are not authorized to view this page.'))
 
 
 @app_views.route('/api/v1/forbidden', methods=['GET'])
@@ -37,4 +38,4 @@ def forbidden():
     Raises:
         403 Forbidden error to trigger error handler.
     """
-    abort(403)
+    abort(403, Response('Forbidden for you.'))
