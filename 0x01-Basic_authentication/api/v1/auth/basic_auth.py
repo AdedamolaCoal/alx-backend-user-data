@@ -105,9 +105,9 @@ class BasicAuth(Auth):
             User or None: The User instance if
             credentials match, otherwise None.
         """
-        if user_email is None or not isinstance(user_email, str):
+        if not user_email or not isinstance(user_email, str):
             return None
-        if user_pwd is None or not isinstance(user_pwd, str):
+        if not user_pwd or not isinstance(user_pwd, str):
             return None
 
         # Search for users with the specified email
