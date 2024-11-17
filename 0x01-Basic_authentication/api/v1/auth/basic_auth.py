@@ -166,12 +166,28 @@ class BasicAuth(Auth):
         bool: True if the path requires
         authentication, False otherwise.
         """
+        if path is None or not excluded_paths:
+            return True
+
+        # Normalize the path by ensuring it does not
+        # end with a trailing slash
+        if path[-1] != '/':
+            path += '/'
+
         for excluded_path in excluded_paths:
-            # If excluded_path contains a '*', treat it as a wildcard match at the end of the path
+            # Normalize excluded path as well
+            if excluded_path[-1] != '/':
+                excluded_path += '/'
+
+            # Check if excluded path ends with '*' (wildcard)
             if excluded_path.endswith('*'):
-                # Match if the path starts with the part before '*'
+                # Check if path starts with the excluded path
+                # prefix (excluding the '*')
                 if path.startswith(excluded_path[:-1]):
                     return False
-            # Check for exact matches
-            elif path == excluded_path:
-                return False
+            else:
+                # Check for exact match
+                if path == excluded_path:
+                    return False
+
+        return True
