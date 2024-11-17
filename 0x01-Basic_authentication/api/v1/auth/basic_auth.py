@@ -116,10 +116,10 @@ class BasicAuth(Auth):
             return None
 
         user = users[0]
-        if user.is_valid_password(user_pwd):
-            return user
+        if not user.is_valid_password(user_pwd):
+            return None
 
-        return None
+        return user
 
     def current_user(self, request=None) -> Optional[User]:
         """
