@@ -92,7 +92,7 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(
         self, user_email: str, user_pwd: str
-    ) -> TypeVar('User'):
+    ) -> TypeVar('User'):  # type: ignore
         """
         Returns the User instance based on
         the user's email and password.
@@ -132,19 +132,19 @@ class BasicAuth(Auth):
             User or None: The User instance if authenticated, otherwise None.
         """
         auth_header = self.authorization_header(request)
-        if not auth_header:
+        if auth_header is None:
             return None
 
         base64_auth = self.extract_base64_authorization_header(auth_header)
-        if not base64_auth:
+        if base64_auth is None:
             return None
 
         decoded_auth = self.decode_base64_authorization_header(base64_auth)
-        if not decoded_auth:
+        if decoded_auth is None:
             return None
 
         user_email, user_pwd = self.extract_user_credentials(decoded_auth)
-        if not user_email or not user_pwd:
+        if user_email is None or user_pwd is None:
             return None
 
         user = self.user_object_from_credentials(user_email, user_pwd)
@@ -166,27 +166,12 @@ class BasicAuth(Auth):
         bool: True if the path requires
         authentication, False otherwise.
         """
-        if path is None or not excluded_paths:
-            return True
-
-        # Normalize the path by ensuring it does not end with a trailing slash
-        if path[-1] != '/':
-            path += '/'
-
         for excluded_path in excluded_paths:
-            # Normalize excluded path as well
-            if excluded_path[-1] != '/':
-                excluded_path += '/'
-
-            # Check if excluded path ends with '*' (wildcard)
+            # If excluded_path contains a '*', treat it as a wildcard match at the end of the path
             if excluded_path.endswith('*'):
-                # Check if path starts with the excluded path
-                # prefix (excluding the '*')
+                # Match if the path starts with the part before '*'
                 if path.startswith(excluded_path[:-1]):
                     return False
-            else:
-                # Check for exact match
-                if path == excluded_path:
-                    return False
-
-        return True
+            # Check for exact matches
+            elif path == excluded_path:
+                return False
