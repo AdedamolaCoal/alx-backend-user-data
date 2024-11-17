@@ -4,7 +4,6 @@ API app for managing requests with authentication.
 """
 
 from flask import Flask, jsonify, abort, request
-from api.v1.views import app_views
 from flask_cors import CORS
 import os
 
