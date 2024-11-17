@@ -5,7 +5,7 @@ BasicAuth module for managing basic authentication.
 
 import base64
 from models.user import User
-from typing import Tuple, Optional
+from typing import Tuple, Optional, TypeVar
 from api.v1.auth.auth import Auth
 
 
@@ -92,7 +92,7 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(
         self, user_email: str, user_pwd: str
-    ) -> Optional[User]:
+    ) -> TypeVar('User'):
         """
         Returns the User instance based on
         the user's email and password.
