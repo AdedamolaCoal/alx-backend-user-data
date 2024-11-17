@@ -36,18 +36,10 @@ class Auth:
         return False
 
     def authorization_header(self, request=None) -> str:
-        """
-        Retrieves the Authorization header from the request.
-
-        Args:
-            request (Flask request): The request object.
-
-        Returns:
-            str: Authorization header or None if not present.
-        """
-        if request is None or 'Authorization' not in request.headers:
+        """Return the Authorization header from a request."""
+        if request is None:
             return None
-        return request.headers.get('Authorization')
+        return request.headers.get("Authorization", None)
 
     def current_user(self, request=None) -> TypeVar('User'):  # type: ignore
         """
