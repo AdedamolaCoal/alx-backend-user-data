@@ -169,8 +169,7 @@ class BasicAuth(Auth):
         if path is None or not excluded_paths:
             return True
 
-        # Normalize the path by ensuring it does not
-        # end with a trailing slash
+        # Normalize the path by ensuring it does not end with a trailing slash
         if path[-1] != '/':
             path += '/'
 
