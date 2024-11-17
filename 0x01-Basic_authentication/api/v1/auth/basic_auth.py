@@ -91,7 +91,7 @@ class BasicAuth(Auth):
         self, user_email: str, user_pwd: str
     ) -> Optional[User]:
         """
-        Returns the User instance based on 
+        Returns the User instance based on
         the user's email and password.
 
         Args:
@@ -160,7 +160,7 @@ class BasicAuth(Auth):
             are excluded from authentication.
 
         Returns:
-        bool: True if the path requires 
+        bool: True if the path requires
         authentication, False otherwise.
         """
         if path is None or not excluded_paths:
@@ -177,7 +177,8 @@ class BasicAuth(Auth):
 
             # Check if excluded path ends with '*' (wildcard)
             if excluded_path.endswith('*'):
-                # Check if path starts with the excluded path prefix (excluding the '*')
+                # Check if path starts with the excluded path
+                # prefix (excluding the '*')
                 if path.startswith(excluded_path[:-1]):
                     return False
             else:
