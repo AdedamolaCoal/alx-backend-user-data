@@ -77,10 +77,12 @@ class BasicAuth(Auth):
             Tuple[str, str]: User email and password,
             or (None, None) if extraction fails.
         """
-        if not decoded_base64_authorization_header or not isinstance(decoded_base64_authorization_header, str):
+        if decoded_base64_authorization_header is None:
             return None, None
 
-        # Split only at the first occurrence of ':'
+        if not isinstance(decoded_base64_authorization_header, str):
+            return None, None
+
         if ':' not in decoded_base64_authorization_header:
             return None, None
 
