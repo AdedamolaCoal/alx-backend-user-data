@@ -14,26 +14,23 @@ class Auth:
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """
-        Determines if authentication is required based on the path.
-
-        Args:
-            path (str): The path to check.
-            excluded_paths (List[str]): Paths that are excluded from auth.
-
-        Returns:
-            bool: True if path requires authentication, False otherwise.
+        Determines if authentication is required for a given path
         """
         if path is None:
             return True
-        if excluded_paths is None or excluded_paths == []:
+        if not excluded_paths:
             return True
+
+        # Ensure the path has a trailing slash for comparison
         if not path.endswith('/'):
             path += '/'
-        for excluded_path in excluded_paths:
-            if path == excluded_path:
-                return True
 
-        return False
+        # Check if the path is in the excluded paths
+        for excluded_path in excluded_paths:
+            if excluded_path.endswith('/') and path == excluded_path:
+                return False
+
+        return True
 
     def authorization_header(self, request=None) -> str:
         """
@@ -49,7 +46,7 @@ class Auth:
             return None
         return request.headers.get('Authorization')
 
-    def current_user(self, request=None) -> TypeVar('User'):  # type: ignore
+    def current_user(self, request=None):
         """
         Retrieves the current user based on the request.
 

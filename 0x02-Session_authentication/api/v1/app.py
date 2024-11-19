@@ -5,7 +5,7 @@ API app for managing requests with authentication.
 
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
-import os
+from os import getenv
 
 app = Flask(__name__)
 CORS(app)
@@ -14,11 +14,11 @@ CORS(app)
 auth = None
 
 # Set up the authentication based on AUTH_TYPE environment variable
-AUTH_TYPE = os.getenv("AUTH_TYPE")
+AUTH_TYPE = getenv("AUTH_TYPE")
 if AUTH_TYPE == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
-elif AUTH_TYPE == "auth":
+else:
     from api.v1.auth.auth import Auth
     auth = Auth()
 
@@ -38,47 +38,55 @@ def forbidden_error(error):
 
 
 @app.before_request
-def before_request_handler():
-    """Request filtering for authentication."""
+def before_request():
+    """ Handle filtering of requests before processing """
     if auth is None:
         return
 
-    # Define the paths that do not require authentication
     excluded_paths = ['/api/v1/status/',
                       '/api/v1/unauthorized/', '/api/v1/forbidden/']
-
-    # Check if the path requires authentication
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    # Check for Authorization header
     if auth.authorization_header(request) is None:
-        abort(401)
+        abort(401, description="Unauthorized")
 
-    # Check for current user
+    request.current_user = auth.current_user(request)
     if auth.current_user(request) is None:
-        abort(403)
-
-# Example endpoint
+        abort(403, description="Forbidden")
 
 
-@app.route('/api/v1/status/', methods=['GET'])
+@app.route('/api/v1/status/', methods=['GET'], strict_slashes=False)
 def status():
-    """Status route to check API status."""
-    return jsonify({"status": "OK"})
-
-# Unauthorized route for testing
+    """ Returns the status of the API """
+    return jsonify({"status": "OK"}), 200
 
 
-@app.route('/api/v1/unauthorized/', methods=['GET'])
+@app.route('/api/v1/unauthorized/', methods=['GET'], strict_slashes=False)
 def unauthorized():
-    """Route that raises 401 Unauthorized error."""
-    abort(401)
-
-# Forbidden route for testing
+    """ Test unauthorized error handler """
+    abort(401, description="Unauthorized")
 
 
-@app.route('/api/v1/forbidden/', methods=['GET'])
+@app.route('/api/v1/forbidden/', methods=['GET'], strict_slashes=False)
 def forbidden():
-    """Route that raises 403 Forbidden error."""
-    abort(403)
+    """ Test forbidden error handler """
+    abort(403, description="Forbidden")
+
+
+@app.errorhandler(401)
+def unauthorized_error(error):
+    """ Error handler for 401 """
+    return jsonify({"error": "Unauthorized"}), 401
+
+
+@app.errorhandler(403)
+def forbidden_error(error):
+    """ Error handler for 403 """
+    return jsonify({"error": "Forbidden"}), 403
+
+
+if __name__ == "__main__":
+    host = getenv("API_HOST", "0.0.0.0")
+    port = getenv("API_PORT", "5000")
+    app.run(host=host, port=port)

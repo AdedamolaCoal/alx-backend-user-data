@@ -18,6 +18,12 @@ class User(Base):
         self.first_name = kwargs.get('first_name')
         self.last_name = kwargs.get('last_name')
 
+    def to_dict(self):
+        """Convert user instance to a dictionary."""
+        user_dict = super().to_dict()
+        user_dict.pop("password", None)  # Do not expose the password
+        return user_dict
+
     @property
     def password(self) -> str:
         """ Getter of the password
