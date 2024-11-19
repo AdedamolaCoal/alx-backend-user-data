@@ -110,9 +110,11 @@ class BasicAuth(Auth):
         if not user_pwd or not isinstance(user_pwd, str):
             return None
 
-        # Search for users with the specified email
-        users = User.search({"email": user_email})
-        if not users:
+        try:
+            users = User.search({"email": user_email})
+            if not users or len(users) == 0:
+                return None
+        except Exception:
             return None
 
         user = users[0]
@@ -121,34 +123,37 @@ class BasicAuth(Auth):
 
         return user
 
-    def current_user(self, request=None) -> Optional[User]:
+    def current_user(self, request=None):
         """
-        Retrieves the User instance for a request.
+        Retrieve the user object from
+        the request's BasicAuth credentials.
 
         Args:
-            request: The Flask request object.
+            request (Request): The Flask request object.
 
         Returns:
-            User or None: The User instance if authenticated, otherwise None.
+            User: The authenticated user object,
+            or None if authentication fails.
         """
+        if request is None:
+            return None
+
         auth_header = self.authorization_header(request)
-        if auth_header is None:
+        if auth_header is None or not auth_header.startswith("Basic "):
             return None
 
-        base64_auth = self.extract_base64_authorization_header(auth_header)
-        if base64_auth is None:
+        encoded_credentials = auth_header.split(" ", 1)[1]
+        try:
+            decoded_credentials = base64.b64decode(
+                encoded_credentials).decode('utf-8')
+        except Exception:
             return None
 
-        decoded_auth = self.decode_base64_authorization_header(base64_auth)
-        if decoded_auth is None:
+        if ':' not in decoded_credentials:
             return None
 
-        user_email, user_pwd = self.extract_user_credentials(decoded_auth)
-        if user_email is None or user_pwd is None:
-            return None
-
-        user = self.user_object_from_credentials(user_email, user_pwd)
-        return user
+        user_email, user_pwd = decoded_credentials.split(':', 1)
+        return self.user_object_from_credentials(user_email, user_pwd)
 
     def require_auth(
         self, path: str, excluded_paths: list
