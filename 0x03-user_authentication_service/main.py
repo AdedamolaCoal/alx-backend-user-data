@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Main file
+Main file for testing the DB class.
 """
 
 from db import DB
-from user import User
 
 my_db = DB()
 
+# Add users and print their IDs
 user_1 = my_db.add_user("test@test.com", "SuperHashedPwd")
 print(user_1.id)
 

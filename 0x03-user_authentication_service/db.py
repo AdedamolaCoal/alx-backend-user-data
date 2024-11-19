@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DB module
+DB module for managing user database operations.
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,18 +11,18 @@ from user import Base, User
 
 
 class DB:
-    """DB class for interacting with the database"""
+    """DB class for handling database operations."""
 
     def __init__(self) -> None:
-        """Initialize a new DB instance"""
+        """Initialize a new DB instance."""
         self._engine = create_engine("sqlite:///a.db", echo=True)
-        Base.metadata.drop_all(self._engine)  # Drops all tables
-        Base.metadata.create_all(self._engine)  # Creates all tables
+        Base.metadata.drop_all(self._engine)
+        Base.metadata.create_all(self._engine)
         self.__session = None
 
     @property
     def _session(self) -> Session:
-        """Memoized session object"""
+        """Memoized session object."""
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
@@ -34,12 +34,12 @@ class DB:
 
         Args:
             email (str): The user's email address.
-            hashed_password (str): The hashed password for the user.
+            hashed_password (str): The user's hashed password.
 
         Returns:
-            User: The User object that was added to the database.
+            User: The newly created user instance.
         """
-        new_user = User(email=email, hashed_password=hashed_password)
-        self._session.add(new_user)
-        self._session.commit()  # Save changes to the database
-        return new_user
+        user = User(email=email, hashed_password=hashed_password)
+        self._session.add(user)
+        self._session.commit()
+        return user
