@@ -7,9 +7,10 @@ user information, including
 the authenticated user and users by ID.
 """
 
-from flask import jsonify, abort, request
+from flask import jsonify, abort, request, Blueprint
 from models.user import User
-from api.v1.views import app_views
+
+app_views = Blueprint('app_views', __name__, url_prefix='/api/v1')
 
 
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
