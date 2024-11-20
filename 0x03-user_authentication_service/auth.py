@@ -3,6 +3,7 @@
 Auth module for handling authentication.
 """
 import uuid
+from uuid import uuid4
 import bcrypt
 from db import DB
 from user import User
@@ -139,9 +140,10 @@ class Auth:
 
     def get_reset_password_token(self, email: str) -> str:
         """
-        Generates a reset password token for the user with the given email.
+        Generates a reset password token
+        for the user with the given email.
         - If the user does not exist, raises a ValueError.
-         - Otherwise, generates a UUID and updates the user's reset_token.
+        - Otherwise, generates a UUID and updates the user's reset_token.
         Returns the reset token as a string.
         """
         user = self._db.find_user_by(email=email)
