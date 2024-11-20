@@ -1,21 +1,41 @@
 #!/usr/bin/env python3
 """
-Basic Flask app.
+Flask app for user registration.
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from auth import Auth
 
 app = Flask(__name__)
+AUTH = Auth()
 
 
-@app.route("/", methods=["GET"])
-def home():
+@app.route("/users", methods=["POST"])
+def users():
     """
-    GET route at "/" that returns a JSON response.
+    POST /users endpoint to register a new user.
 
-    Returns:
-        A JSON payload with a welcome message.
+    Expects:
+        - email: User's email as form data.
+        - password: User's password as form data.
+
+    Responses:
+        - 200: User successfully created.
+        - 400: User already exists.
     """
-    return jsonify({"message": "Bienvenue"})
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if not email or not password:
+        return jsonify(
+            {"message": "email and password required"}), 400
+
+    try:
+        user = AUTH.register_user(email, password)
+        return jsonify(
+            {"email": user.email, "message": "user created"}), 200
+    except ValueError:
+        return jsonify(
+            {"message": "email already registered"}), 400
 
 
 if __name__ == "__main__":
