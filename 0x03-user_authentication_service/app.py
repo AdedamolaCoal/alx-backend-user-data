@@ -83,5 +83,46 @@ def logout():
     return redirect('/')
 
 
+@app.route('/profile', methods=['GET'])
+def profile():
+    """
+    Profile endpoint to retrieve the user's email based on the session ID.
+    - Reads the `session_id` cookie from the request.
+    - Uses `AUTH.get_user_from_session_id` to fetch the user.
+    - If a valid user is found, responds with a 200 status and user's email.
+    - If the session is invalid or user not found, responds with a 403 status.
+    """
+    session_id = request.cookies.get('session_id')
+    if not session_id:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+
+    return jsonify({"email": user.email}), 200
+
+
+@app.route('/reset_password', methods=['POST'])
+def get_reset_password_token():
+    """
+    Generate a reset password token for a given email.
+    - Expects "email" field in the form data.
+    - If the email is not registered, respond with a 403 HTTP status.
+    - Otherwise, generate a reset token and respond with:
+      {"email": "<user email>", "reset_token": "<reset token>"}
+    """
+    email = request.form.get('email')
+    if not email:
+        abort(403)
+
+    try:
+        reset_token = AUTH.get_reset_password_token(email)
+    except ValueError:
+        abort(403)
+
+    return jsonify({"email": email, "reset_token": reset_token}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5001")
