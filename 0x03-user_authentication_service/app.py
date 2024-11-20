@@ -108,7 +108,8 @@ def get_reset_password_token():
     """
     Generate a reset password token for a given email.
     - Expects "email" field in the form data.
-    - If the email is not registered, respond with a 403 HTTP status.
+    - If the email is not registered,
+    respond with a 403 HTTP status.
     - Otherwise, generate a reset token and respond with:
       {"email": "<user email>", "reset_token": "<reset token>"}
     """
@@ -121,7 +122,8 @@ def get_reset_password_token():
     except ValueError:
         abort(403)
 
-    return jsonify({"email": email, "reset_token": reset_token}), 200
+    return jsonify(
+        {"email": email, "reset_token": reset_token}), 200
 
 
 if __name__ == "__main__":
