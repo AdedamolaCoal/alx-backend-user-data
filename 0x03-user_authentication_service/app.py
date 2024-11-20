@@ -2,7 +2,7 @@
 """
 Flask app for user registration.
 """
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify, abort, make_response
 from auth import Auth
 
 app = Flask(__name__)
@@ -36,6 +36,29 @@ def users():
     except ValueError:
         return jsonify(
             {"message": "email already registered"}), 400
+
+
+@app.route('/sessions', methods=['POST'])
+def login():
+    """
+    POST /sessions route to log in a user.
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    # Validate login credentials
+    if not AUTH.valid_login(email, password):
+        abort(401)
+
+    # Create a session for the user
+    session_id = AUTH.create_session(email)
+    if not session_id:
+        abort(401)
+
+    # Set the session_id cookie and return response
+    response = make_response(jsonify({"email": email, "message": "logged in"}))
+    response.set_cookie("session_id", session_id)
+    return response
 
 
 if __name__ == "__main__":
