@@ -106,24 +106,25 @@ def profile():
 @app.route('/reset_password', methods=['POST'])
 def get_reset_password_token():
     """
-    Generate a reset password token for a given email.
-    - Expects "email" field in the form data.
-    - If the email is not registered,
-    respond with a 403 HTTP status.
-    - Otherwise, generate a reset token and respond with:
-      {"email": "<user email>", "reset_token": "<reset token>"}
+    Handle POST /reset_password route to
+    generate a reset password token.
+
+    Expects form data containing the "email" field.
+
+    Returns:
+        JSON response with reset token
+        if email is valid, 403 otherwise.
     """
     email = request.form.get('email')
     if not email:
-        abort(403)
+        abort(400, description="Email field is required")
 
     try:
+        # Generate a reset password token
         reset_token = AUTH.get_reset_password_token(email)
+        return jsonify({"email": email, "reset_token": reset_token}), 200
     except ValueError:
         abort(403)
-
-    return jsonify(
-        {"email": email, "reset_token": reset_token}), 200
 
 
 @app.route('/reset_password', methods=['PUT'])
@@ -145,7 +146,7 @@ def update_password():
     new_password = request.form.get('new_password')
 
     if not email or not reset_token or not new_password:
-        abort(403)  # Ensure all required fields are provided
+        abort(403)
 
     try:
         AUTH.update_password(reset_token, new_password)
