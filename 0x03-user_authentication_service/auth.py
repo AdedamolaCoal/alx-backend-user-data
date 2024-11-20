@@ -2,6 +2,7 @@
 """
 Auth module for handling authentication.
 """
+import uuid
 import bcrypt
 from db import DB
 from user import User
@@ -68,6 +69,16 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
-            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password.encode('utf-8'))
+            return bcrypt.checkpw(password.encode('utf-8'),
+                                  user.hashed_password.encode('utf-8'))
         except NoResultFound:
             return False
+
+    def _generate_uuid() -> str:
+        """
+        Generate a new UUID and return its string representation.
+
+        Returns:
+            str: A string representation of a UUID.
+        """
+        return str(uuid.uuid4())
