@@ -126,5 +126,34 @@ def get_reset_password_token():
         {"email": email, "reset_token": reset_token}), 200
 
 
+@app.route('/reset_password', methods=['PUT'])
+def update_password():
+    """
+    Handle password update requests via the /reset_password route.
+
+    Request body should include:
+    - email: The user's email
+    - reset_token: The token generated for resetting the password
+    - new_password: The new password to set
+
+    Response:
+    - 200: On successful password update with a JSON payload
+    - 403: If the reset token is invalid or any error occurs
+    """
+    email = request.form.get('email')
+    reset_token = request.form.get('reset_token')
+    new_password = request.form.get('new_password')
+
+    if not email or not reset_token or not new_password:
+        abort(403)  # Ensure all required fields are provided
+
+    try:
+        AUTH.update_password(reset_token, new_password)
+    except ValueError:
+        abort(403)
+
+    return jsonify({"email": email, "message": "Password updated"}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5001")
