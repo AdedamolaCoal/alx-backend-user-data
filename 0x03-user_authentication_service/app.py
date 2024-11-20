@@ -2,7 +2,7 @@
 """
 Flask app for user registration.
 """
-from flask import Flask, request, jsonify, abort, make_response
+from flask import Flask, request, jsonify, abort, make_response, redirect
 from auth import Auth
 
 app = Flask(__name__)
@@ -59,6 +59,28 @@ def login():
     response = make_response(jsonify({"email": email, "message": "logged in"}))
     response.set_cookie("session_id", session_id)
     return response
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """
+    Handles DELETE /sessions to log out the user.
+    - Expects 'session_id' as a cookie.
+    - If session is valid, destroys the session and redirects to '/'.
+    - If no valid session is found, returns a 403 status code.
+    """
+    session_id = request.cookies.get("session_id")
+
+    if not session_id:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user is None:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+    return redirect('/')
 
 
 if __name__ == "__main__":
